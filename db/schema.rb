@@ -10,7 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_19_153708) do
+ActiveRecord::Schema.define(version: 2019_08_19_155741) do
+
+  create_table "join_usertimeslots", force: :cascade do |t|
+    t.integer "show_id"
+    t.integer "user_id"
+    t.integer "timeslot_id"
+  end
+
+  create_table "shows", force: :cascade do |t|
+    t.string "title"
+    t.string "genre"
+    t.integer "timeslot_id"
+  end
+
+  create_table "timeslots", force: :cascade do |t|
+    t.integer "day"
+    t.integer "start_time"
+    t.integer "end_time"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
