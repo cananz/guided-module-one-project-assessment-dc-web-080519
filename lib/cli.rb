@@ -1,24 +1,43 @@
 
-# class CommandLineInterface
-#     def get_user_input
-#         gets.chomp
-#     end
-#     def greet
-#         puts 'Welcome to [unnamed]'
-#     end
-#     def ask_name
-#         puts "Please enter your name"
-#         #motorcycle get username info
-#     end
-#     def create_or_find_user_acct
-#         username = get_user_input
-#         User.find_or_create_by(name: username)
-#         puts 'Hey #{username}'
-#     end
+class CommandLineInterface
+# ********** GREETING METHODS **********
+
+    def greet
+        puts 'Welcome to [unnamed]'
+        puts "Please enter your name"
+        username = gets.chomp
+        puts "Hey #{username}"
+    end
+    
+    
+    def ask_what_day
+        puts "What day would you like to see TV listings for?"
+        puts "  Sunday"
+        puts "  Monday"
+        puts "  Tuesday"
+        puts "  Wednesday"
+        puts "  Thursday"
+        puts "  Friday"
+        puts "  Saturday"
+        
+        day = gets.chomp
+        if day.downcase == "sunday"
+            Timeslot.find_by(day: 0).shows.each {|show| 
+                puts ""
+                puts show.title
+                puts ""}
+            
+            
+        else
+            puts "FU"
+        end
+
+        
+          
+    end
 
 
-
-# end
+end
 
 # cli.greet
 # gets.chomp
