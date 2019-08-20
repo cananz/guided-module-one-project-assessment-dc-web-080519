@@ -1,9 +1,9 @@
 require 'faker'
 require 'pry'
-User.destroy_all
-Timeslot.destroy_all
-Show.destroy_all
-ShowUser.destroy_all
+# User.destroy_all
+# Timeslot.destroy_all
+# Show.destroy_all
+# ShowUser.destroy_all
 
 pey = User.find_or_create_by(name: "Peyton")
 ris = User.find_or_create_by(name: "Marisa")
@@ -20,6 +20,14 @@ mon8 = Timeslot.find_or_create_by(day: 1, start_time: 2000, end_time: 2100)
 mon9 = Timeslot.find_or_create_by(day: 1, start_time: 2100, end_time: 2200)
 tue8 = Timeslot.find_or_create_by(day: 2, start_time: 2000, end_time: 2100)
 tue9 = Timeslot.find_or_create_by(day: 2, start_time: 2100, end_time: 2200)
+wed8 = Timeslot.find_or_create_by(day: 3, start_time: 2000, end_time: 2100)
+wed9 = Timeslot.find_or_create_by(day: 3, start_time: 2100, end_time: 2200)
+thurs8 = Timeslot.find_or_create_by(day: 4, start_time: 2000, end_time: 2100)
+thurs9 = Timeslot.find_or_create_by(day: 4, start_time: 2100, end_time: 2200)
+fri8 = Timeslot.find_or_create_by(day: 5, start_time: 2000, end_time: 2100)
+fri9 = Timeslot.find_or_create_by(day: 5, start_time: 2100, end_time: 2200)
+sat8 = Timeslot.find_or_create_by(day: 6, start_time: 2000, end_time: 2100)
+sat9 = Timeslot.find_or_create_by(day: 6, start_time: 2100, end_time: 2200)
 
 
 simpsons = Show.find_or_create_by(title: "The Simpsons", genre: "Comedy", timeslot_id: sun8.id)
@@ -30,10 +38,10 @@ bach = Show.find_or_create_by(title: "The Bachelorette", genre: "Reality", times
 hannah = Show.find_or_create_by(title: "Hannah Montana", genre: "Kids", timeslot_id: mon8.id)
 rmaddow = Show.find_or_create_by(title: "The Rachel Maddow Show", genre: "News", timeslot_id: mon9.id)
 goodbones = Show.find_or_create_by(title: "Good Bones", genre: "Reality", timeslot_id: mon9.id)
-vmars = Show.find_or_create_by(title: "Veronica Mars", genre: "Drama", timeslot_id: tues8.id)
-rhoc = Show.find_or_create_by(title: "Real Housewives of Orange County", genre: "Reality", timeslot_id: tues8.id)
-belowdeck = Show.find_or_create_by(title: "Below Deck: Mediterannean", genre: "Reality", timeslot_id: tues9.id)
-fleabag = Show.find_or_create_by(title: "Fleabag", genre: "Comedy", timeslot_id: tues9.id)
+vmars = Show.find_or_create_by(title: "Veronica Mars", genre: "Drama", timeslot_id: tue8.id)
+rhoc = Show.find_or_create_by(title: "Real Housewives of Orange County", genre: "Reality", timeslot_id: tue8.id)
+belowdeck = Show.find_or_create_by(title: "Below Deck: Mediterannean", genre: "Reality", timeslot_id: tue9.id)
+fleabag = Show.find_or_create_by(title: "Fleabag", genre: "Comedy", timeslot_id: tue9.id)
 survivor = Show.find_or_create_by(title: "Survivor", genre: "Reality", timeslot_id: wed8.id)
 hoarders = Show.find_or_create_by(title: "Hoarders", genre: "Reality", timeslot_id: wed8.id)
 cribs = Show.find_or_create_by(title: "Cribs", genre: "Reality", timeslot_id: wed9.id)
