@@ -42,10 +42,14 @@ greys = Show.find_or_create_by(title: "Grey's Anatomy", genre: "Drama", timeslot
 bbrother = Show.find_or_create_by(title: "Big Brother", genre: "Reality", timeslot_id: thurs8.id)
 goodplace = Show.find_or_create_by(title: "The Good Place", genre: "Comedy", timeslot_id: thurs9.id)
 rupaul = Show.find_or_create_by(title: "RuPaul's Drag Race", genre: "Reality", timeslot_id: thurs9.id)
-greys = Show.find_or_create_by(title: "Grey's Anatomy", genre: "Drama", timeslot_id: fri8.id)
-bbrother = Show.find_or_create_by(title: "Big Brother", genre: "Reality", timeslot_id: fri8.id)
-goodplace = Show.find_or_create_by(title: "The Good Place", genre: "Comedy", timeslot_id: fri9.id)
-rupaul = Show.find_or_create_by(title: "RuPaul's Drag Race", genre: "Reality", timeslot_id: fri9.id)
+parks = Show.find_or_create_by(title: "Parks and Recreation", genre: "Comedy", timeslot_id: fri8.id)
+office = Show.find_or_create_by(title: "The Office", genre: "Comedy", timeslot_id: fri8.id)
+dexter = Show.find_or_create_by(title: "Dexter", genre: "Thriller", timeslot_id: fri9.id)
+arrdev = Show.find_or_create_by(title: "Arrested Development", genre: "Comedy", timeslot_id: fri9.id)
+amazrace = Show.find_or_create_by(title: "The Amazing Race", genre: "Reality", timeslot_id: sat8.id)
+famguy = Show.find_or_create_by(title: "Family Guy", genre: "Comedy", timeslot_id: sat8.id)
+snl = Show.find_or_create_by(title: "Saturday Night Live", genre: "Comedy", timeslot_id: sat9.id)
+trueblood = Show.find_or_create_by(title: "True Blood", genre: "Thriller", timeslot_id: sat9.id)
 
 
 
