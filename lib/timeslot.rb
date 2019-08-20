@@ -4,11 +4,11 @@ class Timeslot < ActiveRecord::Base
 
     @@all = []
 
-    def initialize
+    # def initialize
 
-    end
+    # end
 
-    def find_by_day
-    end
+    # def find_by_day
+    # end
   
 end

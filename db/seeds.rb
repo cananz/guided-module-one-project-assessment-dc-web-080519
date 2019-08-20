@@ -1,6 +1,10 @@
 require 'faker'
 require 'pry'
-# User.destroy_all
+User.destroy_all
+Timeslot.destroy_all
+Show.destroy_all
+ShowUser.destroy_all
+
 pey = User.find_or_create_by(name: "Peyton")
 ris = User.find_or_create_by(name: "Marisa")
 germ = User.find_or_create_by(name: "German")
@@ -17,7 +21,7 @@ mon9 = Timeslot.find_or_create_by(day: 1, start_time: 2100, end_time: 2200)
 tue8 = Timeslot.find_or_create_by(day: 2, start_time: 2000, end_time: 2100)
 tue9 = Timeslot.find_or_create_by(day: 2, start_time: 2100, end_time: 2200)
 
-# Show.destroy_all
+
 simpsons = Show.find_or_create_by(title: "The Simpsons", genre: "Comedy", timeslot_id: sun8.id)
 got = Show.find_or_create_by(title: "Game of Thrones", genre: "Fantasy", timeslot_id: sun9.id)
 bach = Show.find_or_create_by(title: "The Bachelorette", genre: "Reality", timeslot_id: mon8.id)
