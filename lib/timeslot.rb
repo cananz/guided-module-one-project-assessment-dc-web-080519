@@ -24,7 +24,7 @@ class Timeslot < ActiveRecord::Base
     def self.saturday
         self.all.select {|tslot| tslot.day == 6}
     end
-    
+
     def self.daily_shows(daily_timeslots)
         if daily_timeslots
             days_shows = daily_timeslots.map{|tslot| tslot.shows}
@@ -33,8 +33,16 @@ class Timeslot < ActiveRecord::Base
             false
         end
     end
-    
-    
+
+    def self.hourly_shows(hourly_timeslots)
+      if hourly_timeslots
+      hour_shows = hourly_timeslots.map {|tslot|tslot.shows}
+      hour_shows.flatten
+      else
+      false
+      end
+    end
+
+
 
 end
-

@@ -1,4 +1,4 @@
-
+require 'pry'
 
 class CommandLineInterface
 
@@ -14,8 +14,57 @@ class CommandLineInterface
         puts "Hey #{username}!"
         User.find_or_create_by(name: username)
     end
-   
-# ********** SORT BY DAY **********    
+
+    # ********How would you like to search*********
+    # ******* DAY OR TIME ***********
+
+    def ask_how_to_search
+      puts "Would you like to search by Day or Time?"
+      response = gets.chomp
+      if response.downcase == "day"
+          daily_results(ask_what_day())
+      elsif response.downcase == "time"
+          hourly_results(ask_what_time())
+      else
+          puts"Invalid Input"
+          ask_how_to_search_again()
+      end
+
+    end
+
+    def ask_how_to_search_again
+      ask_how_to_search
+    end
+    # ****** SORT BY TIME **********
+    def ask_what_time
+      puts "What time would you like to see TV listings for? "
+      puts "1.  8:00 PM"
+      puts "2.  9:00 PM"
+      time_response = gets.chomp
+    end
+
+    def hourly_timeslots(input)
+        time_response = input.to_i
+      if time_response == 1
+        t8_obj = Timeslot.all.select {|indiv_ts| indiv_ts.start_time == 2000}
+      elsif time_response == 2
+        t9_obj = Timeslot.all.select {|indiv_ts| indiv_ts.start_time == 2100}
+      else
+        false
+      end
+    end
+
+    def ask_time_again
+      hourly_results(ask_what_time)
+    end
+
+    def ask_day_again
+      daily_results(ask_what_day)
+    end
+
+
+
+# ********** SORT BY DAY **********
     def ask_what_day
         puts "What day would you like to see TV listings for?"
         puts "  Sunday"
@@ -29,10 +78,10 @@ class CommandLineInterface
         input = gets.chomp
         # puts `clear`
 
-    end 
-    
+    end
+
     def daily_timeslots(input)
-        
+
         seeking = input.downcase
         if seeking == "sunday"
             Timeslot.sunday
@@ -59,20 +108,40 @@ class CommandLineInterface
             puts `clear`
 
             dts = daily_timeslots(input)
-        
+
             listings = Timeslot.daily_shows(dts)
-            listings.map {|show| 
+            listings.map {|show|
                 puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}" }
                 search_again
         else
         puts `clear`
 
         puts "I've never heard of that day. Please try again!"
-        return_to_main
+        ask_day_again()
          end
     end
+
+    def hourly_results(input)
+      if hourly_timeslots(input)
+        puts `clear`
+
+        hts = hourly_timeslots(input)
+        h_listings = Timeslot.hourly_shows(hts)
+        h_listings.map {|show|
+        puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}"}
+        search_again
+      else
+        puts `clear`
+
+        puts "That is not a time on our schedule. Please choose 1 or 2."
+        ask_time_again()
+      end
+    end
+
+
+
     def return_to_main
-        daily_results(ask_what_day)
+        ask_how_to_search
     end
 
     def readable_time(t)
@@ -84,7 +153,7 @@ class CommandLineInterface
             mil_time -= 12
             h = mil_time.to_s
         end
-        
+
         "#{h}:#{m} PM"
         # search_again
         # binding.pry
@@ -113,16 +182,16 @@ class CommandLineInterface
     def close_screen
         puts `clear`
         'Thanks for using WeeklyWatcher!'
-        
+
         # return nil
         # puts 'Come back anytime!'
     end
     # def whoisyou
     #     promprompt.ask("Please enter your name")
     # end
-end  
-    
-    
+end
+
+
 
 
 
@@ -159,18 +228,3 @@ end
         #     Timeslot.find_by(day: 6).shows.each {|show| puts show.title}
         # else
         #     puts "lolol"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

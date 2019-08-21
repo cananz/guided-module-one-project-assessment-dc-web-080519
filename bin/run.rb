@@ -8,8 +8,9 @@ puts a.asciify('WeeklyWatcher')
 cli.greet
 # cli.greet
 # cli.ask_what_day
+puts cli.ask_how_to_search()
 
-puts cli.daily_results(cli.ask_what_day)
+# puts cli.daily_results(cli.ask_what_day)
 # puts cli.search_again
 
 
