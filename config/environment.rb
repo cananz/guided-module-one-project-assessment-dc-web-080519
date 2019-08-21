@@ -7,3 +7,7 @@ require_all 'lib'
 
 require 'artii'
 
+# require "tty-prompt"
+
+# prompt = TTY::Prompt.new
+

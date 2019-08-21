@@ -1,13 +1,18 @@
 require_relative '../config/environment'
 cli = CommandLineInterface.new
-# binding.pry
 
 a = Artii::Base.new
-puts a.asciify('unnamed TV app')
+prompt = TTY::Prompt.new
+
+puts a.asciify('WeeklyWatcher')
 cli.greet
+# cli.greet
 # cli.ask_what_day
+
 puts cli.daily_results(cli.ask_what_day)
+# puts cli.search_again
+
 
 # toomany = cli.daily_timeslot(ask_what_day)
 
-0
+# 0

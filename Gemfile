@@ -16,3 +16,4 @@ gem "pry"
 gem "require_all"
 gem "faker"
 gem 'artii', '~> 2.1', '>= 2.1.2'
+gem 'tty-prompt'

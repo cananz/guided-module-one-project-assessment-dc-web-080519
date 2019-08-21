@@ -7,5 +7,26 @@ class Show < ActiveRecord::Base
         # mon = Timeslot.monday
         
     # end
-    def 
+    def day_of_week
+        day_num = self.timeslot.day
+            if day_num == 0
+                "Sunday"
+            elsif day_num == 1
+                "Monday"
+            elsif day_num == 2
+                "Tuesday"
+            elsif day_num == 3
+                "Wednesday"
+            elsif day_num == 4
+                "Thursday"
+            elsif day_num == 5
+                "Friday"
+            elsif day_num == 6
+                "Saturday"
+            end
+    end
+
+    def time
+        self.timeslot.start_time
+    end
 end
