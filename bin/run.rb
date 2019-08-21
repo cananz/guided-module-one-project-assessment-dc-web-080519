@@ -1,10 +1,14 @@
 require_relative '../config/environment'
 cli = CommandLineInterface.new
 
-a = Artii::Base.new
+artsy = Artii::Base.new
 prompt = TTY::Prompt.new
 
-puts a.asciify('WeeklyWatcher')
+# puts a.asciify('WeeklyWatcher')
+
+#welcome screen with options to access user account or view listings
+cli.welcome_screen
+
 cli.greet
 # cli.greet
 # cli.ask_what_day

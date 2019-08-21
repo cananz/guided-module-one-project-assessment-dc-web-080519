@@ -1,38 +1,18 @@
 
+require 'pry'
 
 class CommandLineInterface
-
-    # ********** USER_INPUT **********
-
-    # ********** GREETING **********
-    def greet
-        # puts 'Welcome to [WEEKLY WATCHER]'
-        puts 'Welcome to WeeklyWatcher'
-        puts 'Please enter your name'
-        username = gets.chomp
-        puts `clear`
-        puts "Hey #{username}!"
-        User.find_or_create_by(name: username)
+# ********** GEM SETUP **********
+    def prompt
+        TTY::Prompt.new(active_color: :bold)
     end
-   
-# ********** SORT BY DAY **********    
-    def ask_what_day
-        puts "What day would you like to see TV listings for?"
-        puts "  Sunday"
-        puts "  Monday"
-        puts "  Tuesday"
-        puts "  Wednesday"
-        puts "  Thursday"
-        puts "  Friday"
-        puts "  Saturday"
-        puts "  All"
-        input = gets.chomp
-        # puts `clear`
 
-    end 
-    
+    def artsy
+        Artii::Base.new
+    end
+# ********** USER_INPUT **********
     def daily_timeslots(input)
-        
+            
         seeking = input.downcase
         if seeking == "sunday"
             Timeslot.sunday
@@ -54,6 +34,86 @@ class CommandLineInterface
                 false
             end
     end
+# ********** GREETING **********
+    def welcome_screen
+        puts artsy.asciify('WeeklyWatcher')
+        puts 'Welcome to WeeklyWatcher'
+        welcome_choices = {
+            'Access my user account' => login,
+            'Browse TV listings without logging in'}
+
+        [
+            {name:'Access my user account', value}
+        ]
+           '' 
+        prompt.select("What would you like to do today?", welcome_choices, cycle: true)
+
+    end
+
+    def greet
+        # puts 'Welcome to [WEEKLY WATCHER]'
+        # puts 'Welcome to WeeklyWatcher'
+        puts 'Please enter your username'
+        username = gets.chomp
+        puts `clear`
+            if User.names.include?(username)
+            puts "Hey #{username}, it's great to have you back!"
+            else User.find_or_create_by(name: username)
+                puts "Hey #{username}, it's great to meet you!"
+            end
+    end
+    
+# ********** APP NAVIGATION **********
+    def search_again
+        puts ""
+        puts "●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○"
+        puts ""
+        puts 'Would you like to search again?(yes/no)'
+        answer = gets.chomp
+        if answer.downcase == "yes"
+            puts `clear`
+            return_to_main
+        elsif answer.downcase == "no"
+            close_screen
+        else
+            search_again_typo
+        end
+    end
+
+    def search_again_typo
+        puts "Oops, I think there's a typo!"
+        search_again
+    end
+
+    def close_screen
+        puts `clear`
+        'Thanks for using WeeklyWatcher!'
+    end
+   
+# ********** SORT BY DAY **********    
+   def prompt_day
+        days = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
+        prompt.select('What day would you like to see TV listings for?', days, per_page: days.count)
+   end
+
+    def ask_what_day
+        prompt_day
+
+        # puts "What day would you like to see TV listings for?"
+        # puts "  Sunday"
+        # puts "  Monday"
+        # puts "  Tuesday"
+        # puts "  Wednesday"
+        # puts "  Thursday"
+        # puts "  Friday"
+        # puts "  Saturday"
+        # puts "  All"
+        # input = gets.chomp
+        # puts `clear`
+    end 
+    
+    
+    
     def daily_results(input)
         if daily_timeslots(input)
             puts `clear`
@@ -90,33 +150,7 @@ class CommandLineInterface
         # binding.pry
     end
 
-    def search_again
-        puts ""
-        puts "●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○"
-        puts ""
-        puts 'Would you like to search again?(yes/no)'
-        answer = gets.chomp
-        if answer.downcase == "yes"
-            puts `clear`
-            return_to_main
-        elsif answer.downcase == "no"
-            close_screen
-        else
-            search_again_typo
-        end
-    end
-    def search_again_typo
-        puts "Oops, I think there's a typo!"
-        search_again
-    end
 
-    def close_screen
-        puts `clear`
-        'Thanks for using WeeklyWatcher!'
-        
-        # return nil
-        # puts 'Come back anytime!'
-    end
     # def whoisyou
     #     promprompt.ask("Please enter your name")
     # end
