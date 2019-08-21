@@ -1,6 +1,8 @@
 
 class CommandLineInterface
-# ********** GREETING **********
+    # ********** USER_INPUT **********
+
+    # ********** GREETING **********
     def greet
         puts 'Welcome to [UNNAMED TV APP]'
         puts 'Please enter your name'
@@ -20,13 +22,35 @@ class CommandLineInterface
         puts "  Friday"
         puts "  Saturday"
         puts "  All"
-        pay = gets.chomp
+        input = gets.chomp
     end 
-
-    def show_results
-        f = ask_what_day
-        puts Timeslot.find_by_day(f)
+    
+    def daily_timeslots(input)
+        
+        seeking = input.downcase
+        if seeking == "sunday"
+            Timeslot.sunday
+            elsif seeking == "monday"
+                Timeslot.monday
+            elsif seeking == "tuesday"
+                Timeslot.tuesday
+            elsif seeking == "wednesday"
+                Timeslot.wednesday
+            elsif seeking == "thursday"
+                Timeslot.thursday
+            elsif seeking == "friday"
+                Timeslot.friday
+            elsif seeking == "saturday"
+                Timeslot.saturday
+            else
+                puts "ur dumb"
+            end
     end
+    def daily_results(input)
+        dts = daily_timeslots(input)
+        Timeslot.daily_shows(dts)
+    end
+    
 end  
     
     
