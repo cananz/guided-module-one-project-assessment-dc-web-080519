@@ -38,15 +38,15 @@ class CommandLineInterface
     def welcome_screen
         puts artsy.asciify('WeeklyWatcher')
         puts 'Welcome to WeeklyWatcher'
-        welcome_choices = {
-            'Access my user account' => login,
-            'Browse TV listings without logging in'}
+        # welcome_choices = {
+        #     'Access my user account' => login,
+        #     'Browse TV listings without logging in' => }
 
-        [
-            {name:'Access my user account', value}
-        ]
-           '' 
-        prompt.select("What would you like to do today?", welcome_choices, cycle: true)
+        # [
+        #     {name:'Access my user account', value}
+        # ]
+        #    '' 
+        # prompt.select("What would you like to do today?", welcome_choices, cycle: true)
 
     end
 
@@ -56,11 +56,11 @@ class CommandLineInterface
         puts 'Please enter your username'
         username = gets.chomp
         puts `clear`
-            if User.names.include?(username)
-            puts "Hey #{username}, it's great to have you back!"
-            else User.find_or_create_by(name: username)
-                puts "Hey #{username}, it's great to meet you!"
-            end
+            # if User.names.include?(username)
+            # puts "Hey #{username}, it's great to have you back!"
+            # else User.find_or_create_by(name: username)
+            #     puts "Hey #{username}, it's great to meet you!"
+            # end
     end
     
 # ********** APP NAVIGATION **********
@@ -94,11 +94,11 @@ class CommandLineInterface
    def prompt_day
         days = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
         prompt.select('What day would you like to see TV listings for?', days, per_page: days.count)
+        # binding.pry
    end
 
     def ask_what_day
         prompt_day
-
         # puts "What day would you like to see TV listings for?"
         # puts "  Sunday"
         # puts "  Monday"
