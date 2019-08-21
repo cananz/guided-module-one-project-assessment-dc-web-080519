@@ -1,10 +1,11 @@
 require_relative '../config/environment'
 cli = CommandLineInterface.new
 
-a = Artii::Base.new
+a = Artii::Base.new :font => "larry3d"
 prompt = TTY::Prompt.new
 
-puts a.asciify('WeeklyWatcher')
+puts a.asciify("Weekly")
+puts a.asciify("Watcher")
 cli.greet
 # cli.greet
 # cli.ask_what_day

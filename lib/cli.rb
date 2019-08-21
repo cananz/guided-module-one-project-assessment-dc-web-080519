@@ -180,8 +180,10 @@ class CommandLineInterface
     end
 
     def close_screen
-        puts `clear`
-        'Thanks for using WeeklyWatcher!'
+       a = Artii::Base.new :font => "hollywood"
+       puts `clear`
+       puts a.asciify('See ya later!')
+       'Thanks for using WeeklyWatcher!'
 
         # return nil
         # puts 'Come back anytime!'
