@@ -2,6 +2,13 @@
 require 'pry'
 
 class CommandLineInterface
+    attr_accessor :current_user
+    def initialize
+        @current_user = current_user
+    end
+    def current_user(user_obj=nil)
+        user_obj
+    end
 # ********** GEM SETUP **********
     def prompt
         TTY::Prompt.new(active_color: :bold)
@@ -39,13 +46,13 @@ class CommandLineInterface
         puts artsy.asciify('WeeklyWatcher')
         puts 'Welcome to WeeklyWatcher'
         prompt.select("What would you like to do today?") do |menu|
-            menu.choice 'Access(or create) my user account', -> {login}
-            menu.choice 'Browse TV listings without logging in', -> {return_to_main}
+            menu.choice 'Access(or create) my user account', -> {acct_check}
+            menu.choice 'Browse TV listings without logging in', -> {ask_how_to_search_again}
             menu.choice 'Exit Program', -> { close_screen }
           end
     end
 
-    def login
+    def acct_check
         # prompt.yes?("Have you already created a username?") do |q|
         #     q.suffix 'Yup/nope'
         #   end
@@ -60,14 +67,15 @@ class CommandLineInterface
         puts "What is your username?"
 
         username = gets.chomp      
-        current_user = User.all.find {|acct| 
+        current = User.all.find {|acct| 
             # binding.pry
             acct.name.capitalize == username.capitalize}
 
-        if current_user   
+        if current  
             puts `clear`
             puts "Hey #{username.capitalize}, it's great to have you back!"
             puts ""
+            current_user(current)
             user_schedule(current_user.shows)
         else
             puts "Sorry, we couldn't find that username in our system. Would you like to create an account?"
@@ -93,15 +101,15 @@ class CommandLineInterface
     def new_user
     end
 
-    def greet
-        puts artsy.asciify('WeeklyWatcher')
-        puts 'Welcome to WeeklyWatcher'
-        prompt.select("What would you like to do today?") do |menu|
-            menu.choice 'Access(or create) my user account', -> {login}
-            menu.choice 'Browse TV listings without logging in', -> {return_to_main}
-            menu.choice 'Exit Program', -> {close_screen}
-          end
-    end
+    # def greet
+    #     puts artsy.asciify('WeeklyWatcher')
+    #     puts 'Welcome to WeeklyWatcher'
+    #     prompt.select("What would you like to do today?") do |menu|
+    #         menu.choice 'Access(or create) my user account', -> {acct_check}
+    #         menu.choice 'Browse TV listings without logging in', -> {ask_how_to_search_again}
+    #         menu.choice 'Exit Program', -> {close_screen}
+    #       end
+    # end
     
 # ********** APP NAVIGATION **********
     def search_again
@@ -127,7 +135,63 @@ class CommandLineInterface
     end
    
 # ********** SORT BY DAY **********    
-   def prompt_day
+    
+    def ask_time_again
+        hourly_results(ask_what_time)
+    end
+
+    def ask_day_again
+        daily_results(ask_what_day)
+    end
+
+    def ask_what_time
+        puts "What time would you like to see TV listings for? "
+        puts "1.  8:00 PM"
+        puts "2.  9:00 PM"
+        time_response = gets.chomp
+      end
+
+      def hourly_timeslots(input)
+          time_response = input.to_i
+        if time_response == 1
+          t8_obj = Timeslot.all.select {|indiv_ts| indiv_ts.start_time == 2000}
+        elsif time_response == 2
+          t9_obj = Timeslot.all.select {|indiv_ts| indiv_ts.start_time == 2100}
+        else
+          false
+        end
+      end
+
+    def ask_how_to_search
+        puts "Would you like to search by Day or Time?"
+        response = gets.chomp
+        if response.downcase == "day"
+            daily_results(ask_what_day())
+        elsif response.downcase == "time"
+            hourly_results(ask_what_time())
+        else
+            puts"Invalid Input"
+            ask_how_to_search_again()
+        end
+    end
+
+    def ask_how_to_search_again
+        ask_how_to_search
+    end
+
+    # def greet_orig
+    #     # puts 'Welcome to [WEEKLY WATCHER]'
+    #     puts 'Welcome to WeeklyWatcher'
+    #     puts 'Please enter your name'
+    #     username = gets.chomp
+    #     puts clear
+    #     puts "Hey #{username}!"
+    #     User.find_or_create_by(name: username)
+    # end
+
+   
+# *********************
+def prompt_day
         days = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
         prompt.select('What day would you like to see TV listings 4?', days, per_page: days.count)
         # binding.pry
@@ -151,12 +215,17 @@ class CommandLineInterface
         puts `clear`
 
         puts "hmmm... I've never heard of that day. Please try again!"
-        return_to_main
+        ask_how_to_search_again
          end
     end
-    def return_to_main
-        daily_results(ask_what_day)
-    end
+    
+    # def return_to_main ORIG
+    #     daily_results(ask_what_day)
+    # end
+
+    # def return_to_main 2
+    #     ask_how_to_search
+    # end
 
     def readable_time(t)
         s = t.to_s
@@ -174,7 +243,22 @@ end
     
 
 
+def hourly_results(input)
+    if hourly_timeslots(input)
+      puts `clear`
 
+      hts = hourly_timeslots(input)
+      h_listings = Timeslot.hourly_shows(hts)
+      h_listings.map {|show|
+      puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}"}
+      search_again
+    else
+      puts `clear`
+
+      puts "That is not a time on our schedule. Please choose 1 or 2."
+      ask_time_again()
+    end
+  end
 
 
 
