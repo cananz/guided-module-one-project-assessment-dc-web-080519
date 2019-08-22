@@ -2,12 +2,10 @@
 require 'pry'
 
 class CommandLineInterface
-    attr_accessor :current_user
-    def initialize
-        @current_user = current_user
-    end
-    def current_user(user_obj=nil)
-        user_obj
+    attr_reader :current_user
+
+    def current_user=(user_obj)
+        @current_user = user_obj
     end
 # ********** GEM SETUP **********
     def prompt
@@ -46,16 +44,13 @@ class CommandLineInterface
         puts artsy.asciify('WeeklyWatcher')
         puts 'Welcome to WeeklyWatcher'
         prompt.select("What would you like to do today?") do |menu|
-            menu.choice 'Access(or create) my user account', -> {acct_check}
-            menu.choice 'Browse TV listings without logging in', -> {ask_how_to_search_again}
+            menu.choice 'Access(or create) my user account', -> {new_or_return_user}
+            menu.choice 'Browse TV listings without logging in', -> {ask_how_to_search}
             menu.choice 'Exit Program', -> { close_screen }
           end
     end
 
-    def acct_check
-        # prompt.yes?("Have you already created a username?") do |q|
-        #     q.suffix 'Yup/nope'
-        #   end
+    def new_or_return_user
         prompt.select("Have you already created a username?") do |menu|
             menu.choice 'Yup', -> {returning_user}
             menu.choice 'Nope', -> {new_user}
@@ -67,23 +62,31 @@ class CommandLineInterface
         puts "What is your username?"
 
         username = gets.chomp      
-        current = User.all.find {|acct| 
+        me = User.all.find {|acct| 
             # binding.pry
-            acct.name.capitalize == username.capitalize}
-
-        if current  
+            acct.name.downcase == username.downcase}
+            
+        if me
             puts `clear`
             puts "Hey #{username.capitalize}, it's great to have you back!"
             puts ""
-            current_user(current)
-            user_schedule(current_user.shows)
+            
+            @current_user = me
+            user_schedule
         else
-            puts "Sorry, we couldn't find that username in our system. Would you like to create an account?"
+            # puts "Sorry, we couldn't find that username in our system. Would you like to create an account?"
+            prompt.select("Sorry, we couldn't find that username in our system. Would you like to try again or create an account?") do |menu|
+                menu.choice 'Try again', -> {returning_user}
+                menu.choice 'Create an account', -> {new_user}
+                menu.choice 'Browse TV listings without an account', -> {ask_how_to_search}
+              end
         end
     end
 
-    def user_schedule(show_objs)
-        puts "You have some great TV shows in your schedule this week!"
+    def user_schedule
+        if current_user.shows.count >= 1
+            puts "You have some great TV shows in your schedule this week!"
+        end
         puts ""
         show_objs.map {|show| 
             puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}" }
@@ -95,21 +98,24 @@ class CommandLineInterface
         end
     end
 
-    # def current_user=(user_object)
-    #     user_object
-    # end
+  
     def new_user
+        # puts `clear`
+        puts "Please enter your new username:"
+        username = gets.chomp
+            if username_exists(username)
+                username_taken
+            else
+               @current_user = User.create(name: username.downcase)
+                
+
     end
 
-    # def greet
-    #     puts artsy.asciify('WeeklyWatcher')
-    #     puts 'Welcome to WeeklyWatcher'
-    #     prompt.select("What would you like to do today?") do |menu|
-    #         menu.choice 'Access(or create) my user account', -> {acct_check}
-    #         menu.choice 'Browse TV listings without logging in', -> {ask_how_to_search_again}
-    #         menu.choice 'Exit Program', -> {close_screen}
-    #       end
-    # end
+    def username_taken
+        puts "Sorry, someone else already claimed that username. Please try something else:"
+        puts ""
+        new_user
+    end
     
 # ********** APP NAVIGATION **********
     def search_again
