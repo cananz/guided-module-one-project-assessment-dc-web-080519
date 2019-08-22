@@ -44,6 +44,7 @@ class CommandLineInterface
             menu.choice 'Exit Program', -> { close_screen }
           end
     end
+
     def login
         # prompt.yes?("Have you already created a username?") do |q|
         #     q.suffix 'Yup/nope'
@@ -53,6 +54,7 @@ class CommandLineInterface
             menu.choice 'Nope', -> {new_user}
           end
     end
+
     def returning_user
         puts `clear`
         puts "What is your username?"
@@ -71,6 +73,7 @@ class CommandLineInterface
             puts "Sorry, we couldn't find that username in our system. Would you like to create an account?"
         end
     end
+
     def user_schedule(show_objs)
         puts "You have some great TV shows in your schedule this week!"
         puts ""
@@ -80,9 +83,10 @@ class CommandLineInterface
             menu.choice 'My schedule''s looking pretty empty. I''d like to add a show to it.'#, -> {}
             menu.choice 'I need some outside time. I''d like to remove a show from my schedule'#,  #-> {}
             menu.choice 'What else is out there? I''d like to browse TV listings'#,  #-> {}
-            menu.choice 'Got what I came for. Goodbye.', -> {close_screen}
+            menu.choice 'Got what I came 4. Goodbye.', -> {close_screen}
         end
     end
+
     # def current_user=(user_object)
     #     user_object
     # end
@@ -110,16 +114,6 @@ class CommandLineInterface
             {name: 'Return to Main Menu', value: welcome_screen},
             {name: 'Exit program', value: close_screen}]
         prompt.select("Would you like to search again?", searches)
-            # puts 'Would you like to search again?(yes/no)'
-        # answer = gets.chomp
-        # if answer.downcase == "yes"
-        #     puts `clear`
-        #     return_to_main
-        # elsif answer.downcase == "no"
-        #     close_screen
-        # else
-        #     search_again_typo
-        # end
     end
 
     def search_again_typo
@@ -129,13 +123,13 @@ class CommandLineInterface
 
     def close_screen
         puts `clear`
-        puts 'Thanks for using WeeklyWatcher!'
+        puts "Thanks 4 using WeeklyWatcher!"
     end
    
 # ********** SORT BY DAY **********    
    def prompt_day
         days = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
-        prompt.select('What day would you like to see TV listings for?', days, per_page: days.count)
+        prompt.select('What day would you like to see TV listings 4?', days, per_page: days.count)
         # binding.pry
    end
 
