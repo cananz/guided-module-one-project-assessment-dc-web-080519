@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
     def shows
         mine = ShowUser.all.select {|x| x.user == self}
         mine.map {|z| z.show}
-        
+        #write a method in shows #titles that takes in array of shows and returns just the titles
     end
+    
 end

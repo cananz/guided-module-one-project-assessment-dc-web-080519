@@ -63,26 +63,31 @@ class CommandLineInterface
             acct.name.capitalize == username.capitalize}
 
         if current_user   
+            puts `clear`
             puts "Hey #{username.capitalize}, it's great to have you back!"
-            # current_user.shows
+            puts ""
+            user_schedule(current_user.shows)
         else
             puts "Sorry, we couldn't find that username in our system. Would you like to create an account?"
         end
     end
-    
+    def user_schedule(show_objs)
+        puts "You have some great TV shows in your schedule this week!"
+        puts ""
+        show_objs.map {|show| 
+            puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}" }
+        prompt.select("Select and option below:") do |menu|
+            menu.choice 'My schedule''s looking pretty empty. I''d like to add a show to it.'#, -> {}
+            menu.choice 'I need some outside time. I''d like to remove a show from my schedule'#,  #-> {}
+            menu.choice 'What else is out there? I''d like to browse TV listings'#,  #-> {}
+            menu.choice 'Got what I came for. Goodbye.', -> {close_screen}
+        end
+    end
     # def current_user=(user_object)
     #     user_object
     # end
     def new_user
     end
-          
-        
-        
-            # puts 'Please enter your username'
-        
-
-        # puts `clear`
-    # end
 
     def greet
         puts artsy.asciify('WeeklyWatcher')
