@@ -2,8 +2,19 @@ require 'pry'
 
 class CommandLineInterface
 
-    # ********** USER_INPUT **********
+    # ********** USER INPUT/OUTPUT **********
+    def readable_time(t)
+        s = t.to_s
+        h = s[0] + s[1]
+        m = s[2] + s[3]
+        mil_time = h.to_i
+        if mil_time > 12
+            mil_time -= 12
+            h = mil_time.to_s
+        end
 
+        "#{h}:#{m} PM"
+    end
     # ********** GREETING **********
     def greet
         # puts 'Welcome to [WEEKLY WATCHER]'
@@ -14,26 +25,49 @@ class CommandLineInterface
         puts "Hey #{username}!"
         User.find_or_create_by(name: username)
     end
-
+    
     # ********How would you like to search*********
     # ******* DAY OR TIME ***********
-
     def ask_how_to_search
-      puts "Would you like to search by Day or Time?"
-      response = gets.chomp
-      if response.downcase == "day"
-          daily_results(ask_what_day())
-      elsif response.downcase == "time"
-          hourly_results(ask_what_time())
-      else
-          puts"Invalid Input"
-          ask_how_to_search_again()
-      end
-
+        puts "Would you like to search by Day or Time?"
+        response = gets.chomp
+        if response.downcase == "day"
+            daily_results(ask_what_day())
+        elsif response.downcase == "time"
+            hourly_results(ask_what_time())
+        else
+            puts"Invalid Input"
+            ask_how_to_search_again()
+        end
+    end
+    
+    def ask_how_to_search_again
+        ask_how_to_search
     end
 
-    def ask_how_to_search_again
-      ask_how_to_search
+    def search_again
+        puts ""
+        puts "●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○"
+        puts ""
+        puts 'Would you like to search again?(yes/no)'
+        answer = gets.chomp
+        if answer.downcase == "yes"
+            puts `clear`
+            return_to_main
+        elsif answer.downcase == "no"
+            close_screen
+        else
+            search_again_typo
+        end
+    end
+
+    def return_to_main
+        ask_how_to_search
+    end
+    
+    def search_again_typo
+        puts "Oops, I think there's a typo!"
+        search_again
     end
     # ****** SORT BY TIME **********
     def ask_what_time
@@ -58,12 +92,20 @@ class CommandLineInterface
       hourly_results(ask_what_time)
     end
 
-    def ask_day_again
-      daily_results(ask_what_day)
-    end
-
-
-
+    def hourly_results(input)
+        if hourly_timeslots(input)
+          puts `clear`
+          hts = hourly_timeslots(input)
+          h_listings = Timeslot.hourly_shows(hts)
+          h_listings.map {|show|
+          puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}"}
+          search_again
+        else
+          puts `clear`
+          puts "That is not a time on our schedule. Please choose 1 or 2."
+          ask_time_again()
+        end
+      end
 # ********** SORT BY DAY **********
     def ask_what_day
         puts "What day would you like to see TV listings for?"
@@ -76,107 +118,49 @@ class CommandLineInterface
         puts "  Saturday"
         puts "  All"
         input = gets.chomp
-        # puts `clear`
-
     end
-
+    
+    
     def daily_timeslots(input)
-
         seeking = input.downcase
         if seeking == "sunday"
             Timeslot.sunday
-            elsif seeking == "monday"
-                Timeslot.monday
-            elsif seeking == "tuesday"
-                Timeslot.tuesday
-            elsif seeking == "wednesday"
-                Timeslot.wednesday
-            elsif seeking == "thursday"
-                Timeslot.thursday
-            elsif seeking == "friday"
-                Timeslot.friday
-            elsif seeking == "saturday"
-                Timeslot.saturday
-            elsif seeking == "all"
-                Timeslot.all
-            else
-                false
-            end
+        elsif seeking == "monday"
+            Timeslot.monday
+        elsif seeking == "tuesday"
+            Timeslot.tuesday
+        elsif seeking == "wednesday"
+            Timeslot.wednesday
+        elsif seeking == "thursday"
+            Timeslot.thursday
+        elsif seeking == "friday"
+            Timeslot.friday
+        elsif seeking == "saturday"
+            Timeslot.saturday
+        elsif seeking == "all"
+            Timeslot.all
+        else
+            false
+        end
     end
+    
     def daily_results(input)
         if daily_timeslots(input)
             puts `clear`
-
             dts = daily_timeslots(input)
-
             listings = Timeslot.daily_shows(dts)
             listings.map {|show|
-                puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}" }
-                search_again
+            puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}" }
+            search_again
         else
-        puts `clear`
-
-        puts "I've never heard of that day. Please try again!"
-        ask_day_again()
-         end
-    end
-
-    def hourly_results(input)
-      if hourly_timeslots(input)
-        puts `clear`
-
-        hts = hourly_timeslots(input)
-        h_listings = Timeslot.hourly_shows(hts)
-        h_listings.map {|show|
-        puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}"}
-        search_again
-      else
-        puts `clear`
-
-        puts "That is not a time on our schedule. Please choose 1 or 2."
-        ask_time_again()
-      end
-    end
-
-
-
-    def return_to_main
-        ask_how_to_search
-    end
-
-    def readable_time(t)
-        s = t.to_s
-        h = s[0] + s[1]
-        m = s[2] + s[3]
-        mil_time = h.to_i
-        if mil_time > 12
-            mil_time -= 12
-            h = mil_time.to_s
-        end
-
-        "#{h}:#{m} PM"
-        # search_again
-        # binding.pry
-    end
-
-    def search_again
-        puts ""
-        puts "●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○"
-        puts ""
-        puts 'Would you like to search again?(yes/no)'
-        answer = gets.chomp
-        if answer.downcase == "yes"
             puts `clear`
-            return_to_main
-        elsif answer.downcase == "no"
-            close_screen
-        else
-            search_again_typo
+            puts "I've never heard of that day. Please try again!"
+            ask_day_again()
         end
     end
-    def search_again_typo
-        puts "Oops, I think there's a typo!"
-        search_again
+        
+    def ask_day_again
+        daily_results(ask_what_day)
     end
 
     def close_screen
@@ -184,13 +168,7 @@ class CommandLineInterface
        puts `clear`
        puts a.asciify('See ya later!')
        'Thanks for using WeeklyWatcher!'
-
-        # return nil
-        # puts 'Come back anytime!'
     end
-    # def whoisyou
-    #     promprompt.ask("Please enter your name")
-    # end
 end
 
 
