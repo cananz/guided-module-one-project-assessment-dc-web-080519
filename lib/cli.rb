@@ -88,12 +88,12 @@ class CommandLineInterface
             puts "You have some great TV shows in your schedule this week!"
         end
         puts ""
-        show_objs.map {|show| 
+            current_user.shows.map {|show| 
             puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}" }
         prompt.select("Select and option below:") do |menu|
             menu.choice 'My schedule''s looking pretty empty. I''d like to add a show to it.'#, -> {}
             menu.choice 'I need some outside time. I''d like to remove a show from my schedule'#,  #-> {}
-            menu.choice 'What else is out there? I''d like to browse TV listings'#,  #-> {}
+            menu.choice 'What else is out there? I''d like to browse TV listings',  -> {ask_how_to_search}
             menu.choice 'Got what I came 4. Goodbye.', -> {close_screen}
         end
     end
@@ -103,12 +103,12 @@ class CommandLineInterface
         # puts `clear`
         puts "Please enter your new username:"
         username = gets.chomp
-            if username_exists(username)
+            if User.username_exists(username)
                 username_taken
             else
                @current_user = User.create(name: username.downcase)
-                
-
+               user_schedule
+            end
     end
 
     def username_taken
