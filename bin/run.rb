@@ -8,7 +8,7 @@ cli = CommandLineInterface.new
 
 #welcome screen with options to access user account or view listings
 # puts cli.welcome_screen
-
+# binding.pry
 cli.greet
 # cli.greet
 # cli.ask_what_day

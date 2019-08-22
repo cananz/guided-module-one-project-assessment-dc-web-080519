@@ -4,8 +4,7 @@ require 'pry'
 class CommandLineInterface
 # ********** GEM SETUP **********
     def prompt
-        TTY::Prompt.new
-        # (active_color: :bold)
+        TTY::Prompt.new(active_color: :bold)
     end
 
     def artsy
@@ -46,35 +45,44 @@ class CommandLineInterface
           end
     end
     def login
-        prompt.yes?("Have you already created a username?") do |q|
-            q.suffix 'Yup/nope'
-          end
+        # prompt.yes?("Have you already created a username?") do |q|
+        #     q.suffix 'Yup/nope'
+        #   end
         prompt.select("Have you already created a username?") do |menu|
-            menu.choice 'Yup', -> {}
-            menu.choice 'Nope', -> {}
+            menu.choice 'Yup', -> {returning_user}
+            menu.choice 'Nope', -> {new_user}
           end
-    end
-        
-    def new_user
     end
     def returning_user
-        prompt.ask('What is your username?', required: true)
-        username = gets.chomp
-        if User.all.names.include? username
-            puts "Hey #{username}, it's great to have you back!"
+        puts `clear`
+        puts "What is your username?"
+
+        username = gets.chomp      
+        current_user = User.all.find {|acct| 
+            # binding.pry
+            acct.name.capitalize == username.capitalize}
+
+        if current_user   
+            puts "Hey #{username.capitalize}, it's great to have you back!"
+            # current_user.shows
         else
             puts "Sorry, we couldn't find that username in our system. Would you like to create an account?"
-            
         end
+    end
+    
+    # def current_user=(user_object)
+    #     user_object
+    # end
+    def new_user
     end
           
         
         
-            puts 'Please enter your username'
+            # puts 'Please enter your username'
         
 
         # puts `clear`
-    end
+    # end
 
     def greet
         puts artsy.asciify('WeeklyWatcher')
@@ -116,7 +124,7 @@ class CommandLineInterface
 
     def close_screen
         puts `clear`
-        'Thanks for using WeeklyWatcher!'
+        puts 'Thanks for using WeeklyWatcher!'
     end
    
 # ********** SORT BY DAY **********    
