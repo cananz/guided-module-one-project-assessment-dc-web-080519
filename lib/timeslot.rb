@@ -43,6 +43,9 @@ class Timeslot < ActiveRecord::Base
         end
     end
     
+    def shows
+        Show.all.select {|show_obj| show_obj.timeslot == self}
+    end
 
 end
 

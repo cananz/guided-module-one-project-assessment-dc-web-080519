@@ -49,7 +49,7 @@ class CommandLineInterface
             menu.choice 'Exit Program', -> { close_screen }
           end
     end
-
+# ********** USER **********
     def new_or_return_user
         prompt.select("Have you already created a username?") do |menu|
             menu.choice 'Yup', -> {returning_user}
@@ -91,8 +91,8 @@ class CommandLineInterface
             current_user.shows.map {|show| 
             puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}" }
         prompt.select("Select and option below:") do |menu|
-            menu.choice 'My schedule''s looking pretty empty. I''d like to add a show to it.'#, -> {}
-            menu.choice 'I need some outside time. I''d like to remove a show from my schedule'#,  #-> {}
+            menu.choice 'My schedule''s looking pretty empty. I''d like to add a show to it.', -> {add_show}
+            menu.choice 'I need some outside time. I''d like to remove a show from my schedule',  -> {remove_show}
             menu.choice 'What else is out there? I''d like to browse TV listings',  -> {ask_how_to_search}
             menu.choice 'Got what I came 4. Goodbye.', -> {close_screen}
         end
@@ -116,7 +116,45 @@ class CommandLineInterface
         puts ""
         new_user
     end
-    
+# ********** APP NAVIGATION **********    
+  
+    def add_show
+        Show.puts_titles
+
+        puts "Please enter the name of the show you'd like to add to you schedule:"
+        input = gets.chomp
+        show_to_add = Show.all.find {|show|
+        show.title.downcase == input.downcase}
+        if show_to_add
+            # binding.pry
+            ShowUser.create(show_id: show_to_add.id, user_id: current_user.id)
+            puts "SUCCESS! Here's your current WeeklyWatcher Schedule"
+            user_schedule
+        else
+            add_show_again
+        end
+        # binding.pry
+    end
+    def add_show_again 
+        puts `clear`
+        puts "Hmmm. I haven't heard of that show. Try again:"
+        add_show
+    end
+    def remove_show
+        puts "Please enter the name of the show you'd like to remove from your schedule:"
+        puts ""
+        input = gets.chomp 
+        show_to_remove = current_user.shows.find {|show|
+        show.title.downcase == input.downcase}
+        if show_to_remove
+            obj_to_delete = ShowUser.all.find_by(show_id: show_to_remove.id, user_id: current_user.id)
+            # binding.pry
+            obj_to_delete.destroy
+        else
+            puts "Hmmm. I haven't heard of that show."
+        end
+        user_schedule
+    end
 # ********** APP NAVIGATION **********
     def search_again
         puts ""
@@ -198,7 +236,7 @@ class CommandLineInterface
    
 # *********************
 def prompt_day
-        days = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
+        days = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday All)
         prompt.select('What day would you like to see TV listings 4?', days, per_page: days.count)
         # binding.pry
    end

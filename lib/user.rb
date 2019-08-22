@@ -23,4 +23,5 @@ class User < ActiveRecord::Base
             false
         end
     end
+    
 end
