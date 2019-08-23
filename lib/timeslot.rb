@@ -33,6 +33,19 @@ class Timeslot < ActiveRecord::Base
             false
         end
     end
+    
+    def self.hourly_shows(hourly_timeslots)
+        if hourly_timeslots
+            hour_shows = hourly_timeslots.map {|tslot|tslot.shows}
+            hour_shows.flatten
+            else
+            false
+        end
+    end
+    
+    def shows
+        Show.all.select {|show_obj| show_obj.timeslot == self}
+    end
 
     def self.hourly_shows(hourly_timeslots)
       if hourly_timeslots

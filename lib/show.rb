@@ -29,4 +29,14 @@ class Show < ActiveRecord::Base
     def time
         self.timeslot.start_time
     end
+
+    def self.titles
+        self.all.map {|show_obj|
+        show_obj.title}
+    end
+
+    def self.puts_titles
+        self.titles.each {|t|
+        puts t}
+    end
 end
