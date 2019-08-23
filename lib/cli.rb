@@ -104,17 +104,15 @@ class CommandLineInterface
         me = User.all.find {|acct| 
             # binding.pry
             acct.name.downcase == username.downcase}
-            
+           
         if me
             puts `clear`
             puts "Hey #{username.capitalize}, it's great to have you back!"
             puts ""
-            # @current_user = me
+            @current_user = me
             user_schedule
         end
-
-        @current_user = me
-            # binding.pry
+        
     end
 
     def user_not_found
