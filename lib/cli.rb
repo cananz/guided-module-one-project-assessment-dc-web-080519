@@ -78,6 +78,7 @@ class CommandLineInterface
           end
     end
 
+    
     def close_screen
         puts `clear`
         puts hollywood_font.asciify('See ya later!')
@@ -93,6 +94,8 @@ class CommandLineInterface
           end
     end
 
+
+
     def returning_user
         puts `clear`
         puts "What is your username?"
@@ -106,20 +109,22 @@ class CommandLineInterface
             puts `clear`
             puts "Hey #{username.capitalize}, it's great to have you back!"
             puts ""
-        
-            @current_user = me
-        
+            # @current_user = me
             user_schedule
-        
-        else
-
-            prompt.select("Sorry, we couldn't find that username in our system. Would you like to try again or create an account?") do |menu|
-                menu.choice 'Try again', -> {returning_user}
-                menu.choice 'Create an account', -> {new_user}
-                menu.choice 'Browse TV listings without an account', -> {ask_how_to_search}
-              end
         end
+
+        @current_user = me
+            # binding.pry
     end
+
+    def user_not_found
+        prompt.select("Sorry, we couldn't find that username in our system. Would you like to try again or create an account?") do |menu|
+            menu.choice 'Try again', -> {returning_user}
+            menu.choice 'Create an account', -> {new_user}
+            menu.choice 'Browse TV listings without an account', -> {ask_how_to_search}
+          end
+    end
+
 
     def new_user
         puts `clear`
@@ -283,7 +288,7 @@ class CommandLineInterface
           puts "That is not a time on our schedule. Please choose 1 or 2."
           ask_time_again()
         end
-      end
+    end
 # ********** FILTER BY DAY **********  
     def ask_what_day
         prompt_day
