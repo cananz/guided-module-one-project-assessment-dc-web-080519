@@ -4,7 +4,6 @@ require_relative '../config/environment'
 describe "User, .username_exists" do
     
     let (:checker) {CommandLineInterface.new}
-    # let (:person) {User.find_or_create_by(name: "germ")}
     let (:person) {User.find_or_create_by(name: "germ")}
 
       it "knows that an user account exists" do
