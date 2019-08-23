@@ -11,10 +11,14 @@ class CommandLineInterface
         TTY::Prompt.new(active_color: :bold)
     end
 
-    def artsy
-        Artii::Base.new
+    def welcome_font
+        Artii::Base.new :font => "larry3d"
     end
-# ********** USER_INPUT **********
+
+    def hollywood_font
+        Artii::Base.new :font => "hollywood"
+    end
+# ********** COMPUTER <-> HUMAN TRANSLATORS **********
     def daily_timeslots(input) 
         seeking = input.downcase
         if seeking == "sunday"
@@ -37,10 +41,35 @@ class CommandLineInterface
             false
         end
     end
-# ********** GREETING **********
+
+    def hourly_timeslots(input)
+        time_response = input.to_i
+            if time_response == 1
+                t8_obj = Timeslot.all.select {|indiv_ts| indiv_ts.start_time == 2000}
+            elsif time_response == 2
+                t9_obj = Timeslot.all.select {|indiv_ts| indiv_ts.start_time == 2100}
+            else
+                false
+            end
+    end
+
+    def readable_time(t)
+        s = t.to_s
+        h = s[0] + s[1]
+        m = s[2] + s[3]
+        mil_time = h.to_i
+        if mil_time > 12
+            mil_time -= 12
+            h = mil_time.to_s
+        end
+        "#{h}:#{m} PM"
+    end
+
+# ********** WELCOME/CLOSE **********
     def welcome_screen
-        puts artsy.asciify('WeeklyWatcher')
-        puts 'Welcome to WeeklyWatcher'
+        puts `clear`
+        puts welcome_font.asciify('Weekly')
+        puts welcome_font.asciify('Watcher')
         puts ""
         prompt.select("What would you like to do today?") do |menu|
             menu.choice 'Access(or create) my user account', -> {new_or_return_user}
@@ -48,7 +77,14 @@ class CommandLineInterface
             menu.choice 'Exit Program', -> { close_screen }
           end
     end
-# ********** USER **********
+
+    def close_screen
+        puts `clear`
+        puts hollywood_font.asciify('See ya later!')
+        puts ""
+        'Thanks for using WeeklyWatcher!'
+    end
+# ********** USER LOGIN METHODS **********
     def new_or_return_user
         puts `clear`
         prompt.select("Have you already created a username?") do |menu|
@@ -60,7 +96,7 @@ class CommandLineInterface
     def returning_user
         puts `clear`
         puts "What is your username?"
-
+        puts ""
         username = gets.chomp      
         me = User.all.find {|acct| 
             # binding.pry
@@ -70,11 +106,13 @@ class CommandLineInterface
             puts `clear`
             puts "Hey #{username.capitalize}, it's great to have you back!"
             puts ""
-            
+        
             @current_user = me
+        
             user_schedule
+        
         else
-            # puts "Sorry, we couldn't find that username in our system. Would you like to create an account?"
+
             prompt.select("Sorry, we couldn't find that username in our system. Would you like to try again or create an account?") do |menu|
                 menu.choice 'Try again', -> {returning_user}
                 menu.choice 'Create an account', -> {new_user}
@@ -83,14 +121,36 @@ class CommandLineInterface
         end
     end
 
+    def new_user
+        puts `clear`
+        puts "Please enter your new username:"
+        username = gets.chomp
+            if User.username_exists(username)
+                username_taken
+            else
+               @current_user = User.create(name: username.downcase)
+               user_schedule
+            end
+    end
+
+    def username_taken
+        puts ""
+        puts "Sorry, someone else already claimed that username. Please try something else:"
+        puts ""
+        new_user
+    end
+
+    # ********** USER SCHEDULE **********
+
     def user_schedule
         if current_user.shows.count >= 1
             puts ""
             puts "You have some great TV shows in your schedule this week!"
         end
+
         puts ""
             current_user.shows.map {|show| 
-            puts "      #{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}" }
+            puts "  #{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}" }
         puts ""
         puts ""
         user_schedule_followup
@@ -105,50 +165,38 @@ class CommandLineInterface
         end
     end
   
-    def new_user
-        # puts `clear`
-        puts "Please enter your new username:"
-        username = gets.chomp
-            if User.username_exists(username)
-                username_taken
-            else
-               @current_user = User.create(name: username.downcase)
-               user_schedule
-            end
-    end
-
-    def username_taken
-        puts "Sorry, someone else already claimed that username. Please try something else:"
-        puts ""
-        new_user
-    end
-# ********** APP NAVIGATION **********    
+    
+# ********** USER SCHEDULE ADD/REMOVE **********    
   
     def add_show
-        Show.puts_titles
+        # Show.puts_titles
         Show.all.map {|a_show| 
             puts "      #{a_show.day_of_week} at #{readable_time(a_show.time)} -- #{a_show.title}" }
         puts ""
         puts "Please enter the name of the show you'd like to add to you schedule:"
+        
         input = gets.chomp
-        show_to_add = Show.all.find {|show|
-        show.title.downcase == input.downcase}
-        if show_to_add
-            # binding.pry
-            ShowUser.create(show_id: show_to_add.id, user_id: current_user.id)
-            puts `clear`
-            puts "SUCCESS! #{show_to_add.title} has been added to your schedule! Here's your current WeeklyWatcher Schedule"
-            user_schedule
-        else
-            add_show_again
-        end
+        
+        show_to_add = Show.all.find {|show| show.title.downcase == input.downcase}
+        
+            if show_to_add
+                # binding.pry
+                ShowUser.create(show_id: show_to_add.id, user_id: current_user.id)
+                puts `clear`
+                puts "SUCCESS! #{show_to_add.title} has been added to your schedule! Here's your current WeeklyWatcher Schedule"
+                user_schedule
+            else
+                add_show_again
+            end
         # binding.pry
     end
+
     def add_show_again 
         puts `clear`
         puts "Hmmm. I haven't heard of that show. Try again:"
         add_show
     end
+
     def remove_show
         puts ""
         puts "Please enter the name of the show you'd like to remove from your schedule:"
@@ -166,16 +214,36 @@ class CommandLineInterface
         user_schedule
     end
 # ********** APP NAVIGATION **********
+    
+    def ask_how_to_search
+        puts `clear`
+        puts "Would you like to search by Day or Time?"
+        response = gets.chomp
+            if response.downcase == "day"
+                daily_results(ask_what_day)
+            elsif response.downcase == "time"
+                hourly_results(ask_what_time)
+            else
+                puts"Invalid Input"
+                ask_how_to_search_again
+            end
+    end
+
+    def ask_how_to_search_again
+        ask_how_to_search
+    end
+
     def search_again
         puts ""
         puts "●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○●○"
         puts ""
-        searches = [
-            {name: 'Search by Day', value: daily_results(ask_what_day)},
-            {name: 'Search by Time', value: hourly_results(ask_what_time)},
-            {name: 'Return to Main Menu', value: welcome_screen},
-            {name: 'Exit program', value: close_screen}]
-        prompt.select("Would you like to search again?", searches)
+
+        prompt.select("Would you like to search again?") do |menu|
+            menu.choice "Search by Day", -> {daily_results(ask_what_day)}
+            menu.choice "Search by Time", -> {hourly_results(ask_what_time)}
+            menu.choice "Return to Main Menu", -> {welcome_screen}
+            menu.choice "Exit program", -> {close_screen}
+        end
     end
 
     def search_again_typo
@@ -183,78 +251,54 @@ class CommandLineInterface
         search_again
     end
 
-    def close_screen
-        puts `clear`
-        puts "Thanks 4 using WeeklyWatcher!"
-    end
+
+
    
-# ********** SORT BY DAY **********    
-    
-    def ask_time_again
-        hourly_results(ask_what_time)
-    end
-
-    def ask_day_again
-        daily_results(ask_what_day)
-    end
-
+  
+# ********** FILTER BY TIME **********  
     def ask_what_time
         puts "What time would you like to see TV listings for? "
         puts "1.  8:00 PM"
         puts "2.  9:00 PM"
         time_response = gets.chomp
-      end
-
-      def hourly_timeslots(input)
-          time_response = input.to_i
-        if time_response == 1
-          t8_obj = Timeslot.all.select {|indiv_ts| indiv_ts.start_time == 2000}
-        elsif time_response == 2
-          t9_obj = Timeslot.all.select {|indiv_ts| indiv_ts.start_time == 2100}
-        else
-          false
-        end
-      end
-
-    def ask_how_to_search
-        puts "Would you like to search by Day or Time?"
-        response = gets.chomp
-        if response.downcase == "day"
-            daily_results(ask_what_day())
-        elsif response.downcase == "time"
-            hourly_results(ask_what_time())
-        else
-            puts"Invalid Input"
-            ask_how_to_search_again()
-        end
+    end
+    
+    def ask_time_again
+        hourly_results(ask_what_time)
     end
 
-    def ask_how_to_search_again
-        ask_how_to_search
-    end
-
-    # def greet_orig
-    #     # puts 'Welcome to [WEEKLY WATCHER]'
-    #     puts 'Welcome to WeeklyWatcher'
-    #     puts 'Please enter your name'
-    #     username = gets.chomp
-    #     puts clear
-    #     puts "Hey #{username}!"
-    #     User.find_or_create_by(name: username)
-    # end
-
-   
-# *********************
-def prompt_day
-        days = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday All)
-        prompt.select('What day would you like to see TV listings 4?', days, per_page: days.count)
-        # binding.pry
-   end
-
+    def hourly_results(input)
+        if hourly_timeslots(input)
+          puts `clear`
+    
+          hts = hourly_timeslots(input)
+          h_listings = Timeslot.hourly_shows(hts)
+          h_listings.map {|show|
+          puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}"}
+          
+          search_again
+        else
+          puts `clear`
+    
+          puts "That is not a time on our schedule. Please choose 1 or 2."
+          ask_time_again()
+        end
+      end
+# ********** FILTER BY DAY **********  
     def ask_what_day
         prompt_day
     end 
-    
+
+    def ask_day_again
+        daily_results(ask_what_day)
+    end
+
+    def prompt_day
+        days = %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday All)
+        prompt.select('What day would you like to see TV listings 4?', days, per_page: days.count)
+        # binding.pry
+    end
+
     def daily_results(input)
         if daily_timeslots(input)
             puts `clear`
@@ -268,49 +312,21 @@ def prompt_day
 
         puts "hmmm... I've never heard of that day. Please try again!"
         ask_how_to_search_again
-         end
-    end
-    
-    # def return_to_main ORIG
-    #     daily_results(ask_what_day)
-    # end
-
-    # def return_to_main 2
-    #     ask_how_to_search
-    # end
-
-    def readable_time(t)
-        s = t.to_s
-        h = s[0] + s[1]
-        m = s[2] + s[3]
-        mil_time = h.to_i
-        if mil_time > 12
-            mil_time -= 12
-            h = mil_time.to_s
         end
-        "#{h}:#{m} PM"
     end
-end  
+
+end
+
+
+
+
+
+
+      
     
     
 
 
-def hourly_results(input)
-    if hourly_timeslots(input)
-      puts `clear`
-
-      hts = hourly_timeslots(input)
-      h_listings = Timeslot.hourly_shows(hts)
-      h_listings.map {|show|
-      puts "#{show.day_of_week} at #{readable_time(show.time)} -- #{show.title}"}
-      search_again
-    else
-      puts `clear`
-
-      puts "That is not a time on our schedule. Please choose 1 or 2."
-      ask_time_again()
-    end
-  end
 
 
 
@@ -327,20 +343,4 @@ def hourly_results(input)
 
 
 
-# puts `clear`
-        # if day.downcase == "sunday"
-        #     Timeslot.find_by(day: 0).shows.each {|show| puts show.title}
-        # elsif day.downcase == "monday"
-        #     Timeslot.find_by(day: 1).shows.each {|show| puts show.title}
-        # elsif day.downcase == "tuesday"
-        #     Timeslot.find_by(day: 2).shows.each {|show| puts show.title}
-        # elsif day.downcase == "wednesday"
-        #     Timeslot.find_by(day: 3).shows.each {|show| puts show.title}
-        # elsif day.downcase == "thursday"
-        #     Timeslot.find_by(day: 4).shows.each {|show| puts show.title}
-        # elsif day.downcase == "friday"
-        #     Timeslot.find_by(day: 5).shows.each {|show| puts show.title}
-        # elsif day.downcase == "saturday"
-        #     Timeslot.find_by(day: 6).shows.each {|show| puts show.title}
-        # else
-        #     puts "lolol"
+
