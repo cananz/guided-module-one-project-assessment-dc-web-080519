@@ -75,7 +75,7 @@ class CommandLineInterface
 
 
     def new_user
-        puts `clear`
+        # puts `clear`
         puts "\nPlease enter your new username:\n"
         username = gets.chomp
             if User.username_exists(username)
@@ -87,8 +87,9 @@ class CommandLineInterface
     end
 
     def username_taken
+        puts `clear`
         puts ""
-        puts "Sorry, someone else already claimed that username. Please try something else:"
+        puts "Sorry, someone else already claimed that username. Please try something else."
         puts ""
         new_user
     end
@@ -146,7 +147,7 @@ class CommandLineInterface
 
     def add_show_again 
         puts `clear`
-        puts "\n\nHmmm. I haven't heard of that show. Try again:\n"
+        puts "\n\nHmmm. I haven't heard of that show. Try again:\n\n"
         add_show
     end
 
